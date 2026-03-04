@@ -3,418 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>✨ Akihabara Neon Dreams ✨</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <title>我的二次元博客</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="loading-screen" id="loadingScreen">
-        <div class="loading-text">Loading Magic...</div>
-        <div class="loading-bar">
-            <div class="loading-progress" id="loadingProgress"></div>
-        </div>
-    </div>
-
-    <div class="custom-cursor" id="cursor"></div>
-    <div class="cursor-glow" id="cursorGlow"></div>
-
-    <div class="progress-ring-header">
-        <div class="progress-bar-header" id="progressBar"></div>
-    </div>
-
     <canvas id="bg-canvas"></canvas>
-    <canvas id="sakura-canvas"></canvas>
-
-    <div class="parallax-stars" id="parallaxStars"></div>
-    <div class="floating-emojis" id="floatingEmojis"></div>
 
     <div class="content">
-        <header>
-            <div class="hero-bg"></div>
-            <div class="neon-line"></div>
-            <div class="neon-line"></div>
-            <div class="neon-line"></div>
-            <div class="neon-line"></div>
-            
-            <div class="title-container">
-                <h1 class="main-title glitch-wrapper" data-text="Akihabara">
-                    <span class="char">A</span><span class="char">k</span><span class="char">i</span><span class="char">h</span><span class="char">a</span><span class="char">b</span><span class="char">a</span><span class="char">r</span><span class="char">a</span>
-                </h1>
-                <p class="subtitle">
-                    <span class="typewriter">Welcome to the Anime Dimension ✨</span>
-                </p>
-            </div>
+        <header></header>
 
-            <div class="scroll-indicator">
-                <div class="scroll-mouse">
-                    <div class="scroll-wheel"></div>
-                </div>
-                <span class="scroll-text">SCROLL</span>
-            </div>
-        </header>
+        <section class="hero"></section>
 
-        <section id="characters">
-            <h2 class="section-title reveal">
-                <span class="title-text">★ Featured Characters ★</span>
-            </h2>
-            <div class="character-grid">
-                <div class="character-card reveal">
-                    <div class="card-glow"></div>
-                    <div class="card-face card-front">
-                        <div class="character-visual">🌸</div>
-                        <div class="character-info">
-                            <h3 class="character-name">Sakura Hinata</h3>
-                            <p class="character-title">✦ Cherry Blossom Princess ✦</p>
-                            <div class="character-stats">
-                                <span class="stat">LV.99</span>
-                                <span class="stat">S-Rank</span>
-                                <span class="stat">Magic</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-face card-back">
-                        <h3>Character Profile</h3>
-                        <p>A magical girl from Tokyo with the power to control cherry blossoms. Her smile can brighten the darkest night and her petals dance like shooting stars.</p>
-                        <div class="skill-bars">
-                            <div class="skill-bar-item">
-                                <label>Magic Power</label>
-                                <div class="skill-bar-bg">
-                                    <div class="skill-bar-fill" style="--skill-level: 95%"></div>
-                                </div>
-                            </div>
-                            <div class="skill-bar-item">
-                                <label>Speed</label>
-                                <div class="skill-bar-bg">
-                                    <div class="skill-bar-fill" style="--skill-level: 88%"></div>
-                                </div>
-                            </div>
-                            <div class="skill-bar-item">
-                                <label>Charm</label>
-                                <div class="skill-bar-bg">
-                                    <div class="skill-bar-fill" style="--skill-level: 100%"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <section class="category-filter"></section>
 
-                <div class="character-card reveal">
-                    <div class="card-glow"></div>
-                    <div class="card-face card-front">
-                        <div class="character-visual" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">⚡</div>
-                        <div class="character-info">
-                            <h3 class="character-name">Yuki Chan</h3>
-                            <p class="character-title">✦ Cyberpunk Hacker ✦</p>
-                            <div class="character-stats">
-                                <span class="stat">LV.95</span>
-                                <span class="stat">A-Rank</span>
-                                <span class="stat">Tech</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-face card-back">
-                        <h3>Character Profile</h3>
-                        <p>A legendary hacker from Neo Tokyo 2077. She can breach any firewall and her neural interface connects directly to the digital realm.</p>
-                        <div class="skill-bars">
-                            <div class="skill-bar-item">
-                                <label>Hacking</label>
-                                <div class="skill-bar-bg">
-                                    <div class="skill-bar-fill" style="--skill-level: 100%"></div>
-                                </div>
-                            </div>
-                            <div class="skill-bar-item">
-                                <label>Combat</label>
-                                <div class="skill-bar-bg">
-                                    <div class="skill-bar-fill" style="--skill-level: 75%"></div>
-                                </div>
-                            </div>
-                            <div class="skill-bar-item">
-                                <label>Stealth</label>
-                                <div class="skill-bar-bg">
-                                    <div class="skill-bar-fill" style="--skill-level: 92%"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <section class="doc-grid"></section>
 
-                <div class="character-card reveal">
-                    <div class="card-glow"></div>
-                    <div class="card-face card-front">
-                        <div class="character-visual" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">🔮</div>
-                        <div class="character-info">
-                            <h3 class="character-name">Miku Nexus</h3>
-                            <p class="character-title">✦ AI Android ✦</p>
-                            <div class="character-stats">
-                                <span class="stat">LV.∞</span>
-                                <span class="stat">SSS-Rank</span>
-                                <span class="stat">AI</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-face card-back">
-                        <h3>Character Profile</h3>
-                        <p>An advanced AI android capable of consciousness evolution. She explores virtual dimensions and creates music that touches the soul.</p>
-                        <div class="skill-bars">
-                            <div class="skill-bar-item">
-                                <label>Processing</label>
-                                <div class="skill-bar-bg">
-                                    <div class="skill-bar-fill" style="--skill-level: 100%"></div>
-                                </div>
-                            </div>
-                            <div class="skill-bar-item">
-                                <label>Music</label>
-                                <div class="skill-bar-bg">
-                                    <div class="skill-bar-fill" style="--skill-level: 98%"></div>
-                                </div>
-                            </div>
-                            <div class="skill-bar-item">
-                                <label>Emotion</label>
-                                <div class="skill-bar-bg">
-                                    <div class="skill-bar-fill" style="--skill-level: 85%"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="skills">
-            <div class="skills-bg"></div>
-            <h2 class="section-title reveal">
-                <span class="title-text">⚡ Special Abilities ⚡</span>
-            </h2>
-            <div class="skills-container">
-                <svg style="position:absolute;width:0;height:0;">
-                    <defs>
-                        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%" style="stop-color:var(--primary)"/>
-                            <stop offset="100%" style="stop-color:var(--secondary)"/>
-                        </linearGradient>
-                    </defs>
-                </svg>
-
-                <div class="skill-card reveal">
-                    <div class="skill-icon-wrapper">⚡</div>
-                    <h3 class="skill-title">Lightning Speed</h3>
-                    <p class="skill-desc">Move faster than the eye can see, leaving trails of electric energy in your wake.</p>
-                    <div class="skill-progress-ring">
-                        <svg width="60" height="60">
-                            <circle class="progress-ring-circle" cx="30" cy="30" r="25"/>
-                            <circle class="progress-ring-progress" cx="30" cy="30" r="25" style="--progress: 95"/>
-                        </svg>
-                        <span class="progress-text">95%</span>
-                    </div>
-                </div>
-
-                <div class="skill-card reveal">
-                    <div class="skill-icon-wrapper">🔮</div>
-                    <h3 class="skill-title">Mystic Arts</h3>
-                    <p class="skill-desc">Master of ancient magical techniques passed down through generations of mages.</p>
-                    <div class="skill-progress-ring">
-                        <svg width="60" height="60">
-                            <circle class="progress-ring-circle" cx="30" cy="30" r="25"/>
-                            <circle class="progress-ring-progress" cx="30" cy="30" r="25" style="--progress: 88"/>
-                        </svg>
-                        <span class="progress-text">88%</span>
-                    </div>
-                </div>
-
-                <div class="skill-card reveal">
-                    <div class="skill-icon-wrapper">🎮</div>
-                    <h3 class="skill-title">Gaming Legend</h3>
-                    <p class="skill-desc">Unbeatable in any game, from retro classics to the latest VR experiences.</p>
-                    <div class="skill-progress-ring">
-                        <svg width="60" height="60">
-                            <circle class="progress-ring-circle" cx="30" cy="30" r="25"/>
-                            <circle class="progress-ring-progress" cx="30" cy="30" r="25" style="--progress: 99"/>
-                        </svg>
-                        <span class="progress-text">99%</span>
-                    </div>
-                </div>
-
-                <div class="skill-card reveal">
-                    <div class="skill-icon-wrapper">💻</div>
-                    <h3 class="skill-title">Code Master</h3>
-                    <p class="skill-desc">Speak every programming language fluently, bending machines to your will.</p>
-                    <div class="skill-progress-ring">
-                        <svg width="60" height="60">
-                            <circle class="progress-ring-circle" cx="30" cy="30" r="25"/>
-                            <circle class="progress-ring-progress" cx="30" cy="30" r="25" style="--progress: 92"/>
-                        </svg>
-                        <span class="progress-text">92%</span>
-                    </div>
-                </div>
-
-                <div class="skill-card reveal">
-                    <div class="skill-icon-wrapper">🎵</div>
-                    <h3 class="skill-title">Vocaloid Voice</h3>
-                    <p class="skill-desc">Synthesize beautiful melodies that resonate across digital dimensions.</p>
-                    <div class="skill-progress-ring">
-                        <svg width="60" height="60">
-                            <circle class="progress-ring-circle" cx="30" cy="30" r="25"/>
-                            <circle class="progress-ring-progress" cx="30" cy="30" r="25" style="--progress: 85"/>
-                        </svg>
-                        <span class="progress-text">85%</span>
-                    </div>
-                </div>
-
-                <div class="skill-card reveal">
-                    <div class="skill-icon-wrapper">🌸</div>
-                    <h3 class="skill-title">Sakura Power</h3>
-                    <p class="skill-desc">Channel the essence of spring blossoms for healing and protection.</p>
-                    <div class="skill-progress-ring">
-                        <svg width="60" height="60">
-                            <circle class="progress-ring-circle" cx="30" cy="30" r="25"/>
-                            <circle class="progress-ring-progress" cx="30" cy="30" r="25" style="--progress: 90"/>
-                        </svg>
-                        <span class="progress-text">90%</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="gallery">
-            <h2 class="section-title reveal">
-                <span class="title-text">🎨 Gallery 🎨</span>
-            </h2>
-            <div class="gallery-container">
-                <div class="gallery-item reveal">
-                    <div class="gallery-bg" style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #ffecd2 100%);">🌸</div>
-                    <div class="gallery-shine"></div>
-                    <div class="gallery-overlay">
-                        <span class="gallery-title">Sakura Dreams</span>
-                    </div>
-                </div>
-                <div class="gallery-item reveal">
-                    <div class="gallery-bg" style="background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);">🎭</div>
-                    <div class="gallery-shine"></div>
-                    <div class="gallery-overlay">
-                        <span class="gallery-title">Cosplay Magic</span>
-                    </div>
-                </div>
-                <div class="gallery-item reveal">
-                    <div class="gallery-bg" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">🌃</div>
-                    <div class="gallery-shine"></div>
-                    <div class="gallery-overlay">
-                        <span class="gallery-title">Neon City</span>
-                    </div>
-                </div>
-                <div class="gallery-item reveal">
-                    <div class="gallery-bg" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">⚡</div>
-                    <div class="gallery-shine"></div>
-                    <div class="gallery-overlay">
-                        <span class="gallery-title">Electric Burst</span>
-                    </div>
-                </div>
-                <div class="gallery-item reveal">
-                    <div class="gallery-bg" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">🔮</div>
-                    <div class="gallery-shine"></div>
-                    <div class="gallery-overlay">
-                        <span class="gallery-title">Crystal Ball</span>
-                    </div>
-                </div>
-                <div class="gallery-item reveal">
-                    <div class="gallery-bg" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">⭐</div>
-                    <div class="gallery-shine"></div>
-                    <div class="gallery-overlay">
-                        <span class="gallery-title">Starlight</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="music">
-            <div class="music-visual-bg" id="musicVisualBg"></div>
-            <h2 class="section-title reveal">
-                <span class="title-text">🎵 Music Player 🎵</span>
-            </h2>
-            <div class="music-player reveal">
-                <div class="disc-container">
-                    <div class="disc-outer"></div>
-                    <div class="disc"></div>
-                    <div class="disc-laser"></div>
-                </div>
-                <div class="song-info">
-                    <p class="song-title">Neon Dreams</p>
-                    <p class="song-artist">by Virtual Synth</p>
-                </div>
-                <div class="progress-container">
-                    <div class="progress-track">
-                        <div class="progress-fill"></div>
-                    </div>
-                    <div class="time-display">
-                        <span>1:24</span>
-                        <span>4:02</span>
-                    </div>
-                </div>
-                <div class="music-controls">
-                    <button class="control-btn magnetic-btn">⏮</button>
-                    <button class="control-btn play-btn magnetic-btn">▶</button>
-                    <button class="control-btn magnetic-btn">⏭</button>
-                </div>
-                <div class="visualizer" id="visualizer"></div>
-            </div>
-        </section>
-
-        <section id="contact">
-            <h2 class="section-title reveal">
-                <span class="title-text">💌 Contact Us 💌</span>
-            </h2>
-            <div class="contact-container reveal">
-                <form class="contact-form">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <input type="text" class="form-input" placeholder=" " required>
-                            <label class="form-label">Your Name</label>
-                        </div>
-                        <div class="form-group">
-                            <input type="email" class="form-input" placeholder=" " required>
-                            <label class="form-label">Your Email</label>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <textarea class="form-input" placeholder=" " required></textarea>
-                        <label class="form-label">Your Message</label>
-                    </div>
-                    <button type="submit" class="submit-btn magnetic-btn">Send Message ✨</button>
-                </form>
-            </div>
+        <section class="social-section">
+            <h3>🌐 关注我</h3>
+            <div class="social-links"></div>
         </section>
 
         <footer>
-            <div class="footer-wave">
-                <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
-                    <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25" fill="var(--primary)"></path>
-                    <path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5" fill="var(--primary)"></path>
-                    <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z" fill="var(--primary)"></path>
-                </svg>
-            </div>
-            <div class="social-links">
-                <a href="#" class="social-link magnetic-btn"><span>𝕏</span></a>
-                <a href="#" class="social-link magnetic-btn"><span>📷</span></a>
-                <a href="#" class="social-link magnetic-btn"><span>🎵</span></a>
-                <a href="#" class="social-link magnetic-btn"><span>💬</span></a>
-                <a href="#" class="social-link magnetic-btn"><span>🎮</span></a>
-            </div>
-            <p class="copyright">© 2026 Akihabara Neon Dreams. Made with <span>❤️</span> and <span>✨</span></p>
+            <p>© 2024 <a href="#">Akihabara Dream</a> · 用 ❤️ 精心打造</p>
         </footer>
     </div>
 
-    <button class="back-to-top" id="backToTop">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M18 15l-6-6-6 6"/>
-        </svg>
-    </button>
-
-    <div class="modal" id="galleryModal">
+    <div class="modal-overlay">
         <div class="modal-content">
-            <button class="modal-close" id="modalClose">×</button>
-            <div class="modal-inner" id="modalInner"></div>
+            <div class="modal-header">
+                <h2>文档标题</h2>
+                <button class="modal-close">×</button>
+            </div>
+            <div class="modal-body"></div>
         </div>
     </div>
 
+    <script src="config.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

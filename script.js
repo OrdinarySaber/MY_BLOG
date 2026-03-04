@@ -1,698 +1,434 @@
-const loadingScreen = document.getElementById('loadingScreen');
-const loadingProgress = document.getElementById('loadingProgress');
-let loadProgress = 0;
+// ============================================
+// 博客核心功能脚本
+// ============================================
 
-const loadInterval = setInterval(() => {
-    loadProgress += Math.random() * 15;
-    if (loadProgress >= 100) {
-        loadProgress = 100;
-        clearInterval(loadInterval);
-        setTimeout(() => {
-            loadingScreen.classList.add('hidden');
-        }, 500);
-    }
-    loadingProgress.style.width = loadProgress + '%';
-}, 100);
-
-const cursor = document.getElementById('cursor');
-const cursorGlow = document.getElementById('cursorGlow');
-let cursorX = 0, cursorY = 0;
-let currentX = 0, currentY = 0;
-
-document.addEventListener('mousemove', (e) => {
-    cursorX = e.clientX;
-    cursorY = e.clientY;
-    cursorGlow.style.left = e.clientX + 'px';
-    cursorGlow.style.top = e.clientY + 'px';
-});
-
-function animateCursor() {
-    currentX += (cursorX - currentX) * 0.15;
-    currentY += (cursorY - currentY) * 0.15;
-    cursor.style.left = currentX + 'px';
-    cursor.style.top = currentY + 'px';
-    requestAnimationFrame(animateCursor);
-}
-animateCursor();
-
-document.querySelectorAll('a, button, .character-card, .gallery-item, .skill-card').forEach(el => {
-    el.addEventListener('mouseenter', () => {
-        cursor.style.transform = 'translate(-50%, -50%) scale(2)';
-        cursor.style.borderColor = 'var(--tertiary)';
-    });
-    el.addEventListener('mouseleave', () => {
-        cursor.style.transform = 'translate(-50%, -50%) scale(1)';
-        cursor.style.borderColor = 'var(--primary)';
-    });
-});
-
-const bgCanvas = document.getElementById('bg-canvas');
-const bgCtx = bgCanvas.getContext('2d');
-let bgWidth, bgHeight;
-let bgParticles = [];
-
-function resizeBgCanvas() {
-    bgWidth = bgCanvas.width = window.innerWidth;
-    bgHeight = bgCanvas.height = window.innerHeight;
-}
-
-class BgParticle {
+class AnimeBlog {
     constructor() {
-        this.reset();
+        this.config = CONFIG;
+        this.currentCategory = 'all';
+        this.documents = [];
+        this.init();
     }
 
-    reset() {
-        this.x = Math.random() * bgWidth;
-        this.y = Math.random() * bgHeight;
-        this.size = Math.random() * 2 + 0.5;
-        this.speedX = (Math.random() - 0.5) * 0.3;
-        this.speedY = (Math.random() - 0.5) * 0.3;
-        this.hue = Math.random() * 60 + 280;
-        this.opacity = Math.random() * 0.5 + 0.2;
+    async init() {
+        this.setupCursor();
+        this.loadDocuments();
+        this.renderHeader();
+        this.renderHero();
+        this.renderCategoryFilter();
+        this.renderDocuments();
+        this.renderSocialLinks();
+        this.setupModal();
     }
 
-    update() {
-        this.x += this.speedX;
-        this.y += this.speedY;
+    // 自定义光标
+    setupCursor() {
+        const cursor = document.createElement('div');
+        cursor.className = 'custom-cursor';
+        document.body.appendChild(cursor);
 
-        if (this.x < 0 || this.x > bgWidth || this.y < 0 || this.y > bgHeight) {
-            this.reset();
+        const cursorGlow = document.createElement('div');
+        cursorGlow.className = 'cursor-glow';
+        document.body.appendChild(cursorGlow);
+
+        let cursorX = 0, cursorY = 0;
+        let currentX = 0, currentY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            cursorX = e.clientX;
+            cursorY = e.clientY;
+            cursorGlow.style.left = e.clientX + 'px';
+            cursorGlow.style.top = e.clientY + 'px';
+        });
+
+        function animate() {
+            currentX += (cursorX - currentX) * 0.15;
+            currentY += (cursorY - currentY) * 0.15;
+            cursor.style.left = currentX + 'px';
+            cursor.style.top = currentY + 'px';
+            requestAnimationFrame(animate);
         }
-    }
+        animate();
 
-    draw() {
-        bgCtx.beginPath();
-        bgCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        bgCtx.fillStyle = `hsla(${this.hue}, 100%, 70%, ${this.opacity})`;
-        bgCtx.fill();
-    }
-}
-
-function initBgParticles() {
-    bgParticles = [];
-    const count = Math.floor((bgWidth * bgHeight) / 12000);
-    for (let i = 0; i < count; i++) {
-        bgParticles.push(new BgParticle());
-    }
-}
-
-function drawBgConnections() {
-    for (let i = 0; i < bgParticles.length; i++) {
-        for (let j = i + 1; j < bgParticles.length; j++) {
-            const dx = bgParticles[i].x - bgParticles[j].x;
-            const dy = bgParticles[i].y - bgParticles[j].y;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-
-            if (dist < 100) {
-                bgCtx.beginPath();
-                bgCtx.strokeStyle = `rgba(196, 77, 255, ${0.1 * (1 - dist / 100)})`;
-                bgCtx.lineWidth = 0.5;
-                bgCtx.moveTo(bgParticles[i].x, bgParticles[i].y);
-                bgCtx.lineTo(bgParticles[j].x, bgParticles[j].y);
-                bgCtx.stroke();
-            }
-        }
-    }
-}
-
-function animateBg() {
-    bgCtx.fillStyle = 'rgba(5, 5, 8, 0.1)';
-    bgCtx.fillRect(0, 0, bgWidth, bgHeight);
-
-    bgParticles.forEach(p => {
-        p.update();
-        p.draw();
-    });
-
-    drawBgConnections();
-    requestAnimationFrame(animateBg);
-}
-
-resizeBgCanvas();
-initBgParticles();
-animateBg();
-
-const sakuraCanvas = document.getElementById('sakura-canvas');
-const sakuraCtx = sakuraCanvas.getContext('2d');
-let sakuraWidth, sakuraHeight;
-let sakuraPetals = [];
-
-function resizeSakuraCanvas() {
-    sakuraWidth = sakuraCanvas.width = window.innerWidth;
-    sakuraHeight = sakuraCanvas.height = window.innerHeight;
-}
-
-class SakuraPetal {
-    constructor() {
-        this.reset();
-    }
-
-    reset() {
-        this.x = Math.random() * sakuraWidth;
-        this.y = -20;
-        this.size = Math.random() * 12 + 8;
-        this.speedX = Math.random() * 2 - 1;
-        this.speedY = Math.random() * 2 + 1;
-        this.rotation = Math.random() * 360;
-        this.rotationSpeed = Math.random() * 4 - 2;
-        this.opacity = Math.random() * 0.6 + 0.4;
-        this.hue = Math.random() * 30 + 330;
-    }
-
-    update() {
-        this.x += this.speedX + Math.sin(this.y * 0.01) * 0.5;
-        this.y += this.speedY;
-        this.rotation += this.rotationSpeed;
-
-        if (this.y > sakuraHeight + 20) {
-            this.reset();
-        }
-    }
-
-    draw() {
-        sakuraCtx.save();
-        sakuraCtx.translate(this.x, this.y);
-        sakuraCtx.rotate(this.rotation * Math.PI / 180);
-        sakuraCtx.globalAlpha = this.opacity;
-
-        sakuraCtx.beginPath();
-        sakuraCtx.moveTo(0, -this.size / 2);
-        sakuraCtx.bezierCurveTo(
-            this.size / 2, -this.size / 2,
-            this.size / 2, this.size / 2,
-            0, this.size / 2
-        );
-        sakuraCtx.bezierCurveTo(
-            -this.size / 2, this.size / 2,
-            -this.size / 2, -this.size / 2,
-            0, -this.size / 2
-        );
-        sakuraCtx.fillStyle = `hsla(${this.hue}, 100%, 85%, 1)`;
-        sakuraCtx.fill();
-
-        sakuraCtx.restore();
-    }
-}
-
-function initSakura() {
-    sakuraPetals = [];
-    for (let i = 0; i < 50; i++) {
-        const petal = new SakuraPetal();
-        petal.y = Math.random() * sakuraHeight;
-        sakuraPetals.push(petal);
-    }
-}
-
-function animateSakura() {
-    sakuraCtx.clearRect(0, 0, sakuraWidth, sakuraHeight);
-    sakuraPetals.forEach(p => {
-        p.update();
-        p.draw();
-    });
-    requestAnimationFrame(animateSakura);
-}
-
-resizeSakuraCanvas();
-initSakura();
-animateSakura();
-
-const parallaxStars = document.getElementById('parallaxStars');
-for (let i = 0; i < 100; i++) {
-    const star = document.createElement('div');
-    star.className = 'star';
-    star.style.left = Math.random() * 100 + '%';
-    star.style.top = Math.random() * 100 + '%';
-    star.style.width = Math.random() * 3 + 1 + 'px';
-    star.style.height = star.style.width;
-    star.style.animationDelay = Math.random() * 2 + 's';
-    parallaxStars.appendChild(star);
-}
-
-for (let i = 0; i < 3; i++) {
-    const shootingStar = document.createElement('div');
-    shootingStar.className = 'shooting-star';
-    shootingStar.style.left = Math.random() * 50 + '%';
-    shootingStar.style.top = Math.random() * 50 + '%';
-    shootingStar.style.animationDelay = (i * 5 + Math.random() * 5) + 's';
-    parallaxStars.appendChild(shootingStar);
-}
-
-const floatingEmojis = document.getElementById('floatingEmojis');
-const emojis = ['✨', '🌸', '⭐', '💫', '🌙', '💜', '🎀', '🎵', '💖', '🌟'];
-for (let i = 0; i < 15; i++) {
-    const emoji = document.createElement('div');
-    emoji.className = 'float-emoji';
-    emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-    emoji.style.left = Math.random() * 100 + '%';
-    emoji.style.animationDelay = Math.random() * 15 + 's';
-    emoji.style.animationDuration = (15 + Math.random() * 10) + 's';
-    floatingEmojis.appendChild(emoji);
-}
-
-const progressBar = document.getElementById('progressBar');
-window.addEventListener('scroll', () => {
-    const scrollTop = window.scrollY;
-    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-    const progress = (scrollTop / docHeight) * 100;
-    progressBar.style.width = progress + '%';
-});
-
-const backToTop = document.getElementById('backToTop');
-window.addEventListener('scroll', () => {
-    if (window.scrollY > 500) {
-        backToTop.classList.add('visible');
-    } else {
-        backToTop.classList.remove('visible');
-    }
-});
-
-backToTop.addEventListener('click', () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-});
-
-const revealElements = document.querySelectorAll('.reveal');
-const revealObserver = new IntersectionObserver((entries) => {
-    entries.forEach((entry, index) => {
-        if (entry.isIntersecting) {
-            setTimeout(() => {
-                entry.target.classList.add('active');
-            }, index * 100);
-        }
-    });
-}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
-
-revealElements.forEach(el => revealObserver.observe(el));
-
-const galleryItems = document.querySelectorAll('.gallery-item');
-const modal = document.getElementById('galleryModal');
-const modalInner = document.getElementById('modalInner');
-const modalClose = document.getElementById('modalClose');
-
-galleryItems.forEach(item => {
-    item.addEventListener('click', () => {
-        const bg = item.querySelector('.gallery-bg');
-        modalInner.style.background = bg.style.background;
-        modalInner.innerHTML = bg.innerHTML;
-        modal.classList.add('active');
-    });
-});
-
-modalClose.addEventListener('click', () => modal.classList.remove('active'));
-modal.addEventListener('click', (e) => {
-    if (e.target === modal) modal.classList.remove('active');
-});
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') modal.classList.remove('active');
-});
-
-const visualizer = document.getElementById('visualizer');
-for (let i = 0; i < 20; i++) {
-    const bar = document.createElement('div');
-    bar.className = 'viz-bar';
-    bar.style.setProperty('--viz-height', (Math.random() * 60 + 20) + 'px');
-    bar.style.animationDelay = Math.random() * 0.5 + 's';
-    visualizer.appendChild(bar);
-}
-
-const musicVisualBg = document.getElementById('musicVisualBg');
-for (let i = 0; i < 50; i++) {
-    const bar = document.createElement('div');
-    bar.className = 'music-bar-bg';
-    bar.style.animationDelay = Math.random() * 0.5 + 's';
-    musicVisualBg.appendChild(bar);
-}
-
-const magneticBtns = document.querySelectorAll('.magnetic-btn');
-magneticBtns.forEach(btn => {
-    btn.addEventListener('mousemove', (e) => {
-        const rect = btn.getBoundingClientRect();
-        const x = e.clientX - rect.left - rect.width / 2;
-        const y = e.clientY - rect.top - rect.height / 2;
-        btn.style.transform = `translate(${x * 0.2}px, ${y * 0.2}px)`;
-    });
-    btn.addEventListener('mouseleave', () => {
-        btn.style.transform = 'translate(0, 0)';
-    });
-});
-
-const submitBtn = document.querySelector('.submit-btn');
-submitBtn.addEventListener('click', function(e) {
-    e.preventDefault();
-    this.innerHTML = 'Sent! ✨';
-    this.style.background = 'linear-gradient(135deg, #4facfe, #00f2fe)';
-    setTimeout(() => {
-        this.innerHTML = 'Send Message ✨';
-        this.style.background = '';
-        document.querySelectorAll('.form-input').forEach(input => input.value = '');
-    }, 2000);
-});
-
-window.addEventListener('resize', () => {
-    resizeBgCanvas();
-    initBgParticles();
-    resizeSakuraCanvas();
-});
-
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function(e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            target.scrollIntoView({ behavior: 'smooth' });
-        }
-    });
-});
-
-let lastScrollY = 0;
-window.addEventListener('scroll', () => {
-    const currentScrollY = window.scrollY;
-    const stars = document.querySelectorAll('.star');
-    stars.forEach((star, i) => {
-        const speed = (i % 3 + 1) * 0.1;
-        star.style.transform = `translateY(${(currentScrollY - lastScrollY) * speed}px)`;
-    });
-    lastScrollY = currentScrollY;
-});
-
-class MusicPlayer {
-    constructor() {
-        this.audioContext = null;
-        this.masterGain = null;
-        this.analyser = null;
-        this.isPlaying = false;
-        this.currentSongIndex = 0;
-        this.songDuration = 242;
-        this.currentTime = 84;
-        this.volume = 0.3;
-        this.oscillators = [];
-        this.currentNoteIndex = 0;
-        this.noteInterval = null;
-
-        this.playlist = [
-            { name: 'Neon Dreams', duration: '4:02', tempo: 140, key: 'C' },
-            { name: 'Cyber Heart', duration: '3:45', tempo: 120, key: 'Am' },
-            { name: 'Sakura Bloom', duration: '5:12', tempo: 90, key: 'F' },
-            { name: 'Digital Love', duration: '3:58', tempo: 128, key: 'G' }
-        ];
-
-        this.melodies = {
-            'C': [261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88, 523.25],
-            'Am': [220.00, 246.94, 261.63, 293.66, 329.63, 349.23, 392.00, 440.00],
-            'F': [174.61, 196.00, 220.00, 233.08, 261.63, 293.66, 329.63, 349.23],
-            'G': [196.00, 220.00, 246.94, 261.63, 293.66, 329.63, 369.99, 392.00]
-        };
-
-        this.elements = {
-            playBtn: document.querySelector('.control-btn.play-btn'),
-            prevBtn: document.querySelector('.control-btn:nth-child(1)'),
-            nextBtn: document.querySelector('.control-btn:nth-child(3)'),
-            progressTrack: document.querySelector('.progress-track'),
-            progressFill: document.querySelector('.progress-fill'),
-            currentTimeEl: document.querySelector('.time-display span:first-child'),
-            totalTimeEl: document.querySelector('.time-display span:last-child'),
-            songTitle: document.querySelector('.song-title'),
-            discContainer: document.querySelector('.disc-container'),
-            volumeSlider: document.querySelector('.volume-slider')
-        };
-
-        this.initElements();
-        this.bindEvents();
-        this.updatePlaylistUI();
-    }
-
-    initElements() {
-        const playlistContainer = document.createElement('div');
-        playlistContainer.className = 'playlist';
-        playlistContainer.innerHTML = `
-            <h4>♫ PLAYLIST</h4>
-            <div class="playlist-items"></div>
-        `;
-
-        const musicPlayer = document.querySelector('.music-player');
-        musicPlayer.appendChild(playlistContainer);
-
-        this.playlistItems = playlistContainer.querySelector('.playlist-items');
-
-        const volumeControl = document.createElement('div');
-        volumeControl.className = 'volume-control';
-        volumeControl.innerHTML = `
-            <span class="volume-icon">🔊</span>
-            <input type="range" class="volume-slider" min="0" max="1" step="0.01" value="0.3">
-        `;
-        musicPlayer.querySelector('.music-controls').parentNode.insertBefore(
-            volumeControl,
-            musicPlayer.querySelector('.visualizer')
-        );
-
-        this.elements.volumeSlider = volumeControl.querySelector('.volume-slider');
-    }
-
-    bindEvents() {
-        this.elements.playBtn.addEventListener('click', () => this.togglePlay());
-        this.elements.prevBtn.addEventListener('click', () => this.prevSong());
-        this.elements.nextBtn.addEventListener('click', () => this.nextSong());
-
-        this.elements.progressTrack.addEventListener('click', (e) => this.seek(e));
-
-        this.elements.volumeSlider.addEventListener('input', (e) => {
-            this.volume = parseFloat(e.target.value);
-            if (this.masterGain) {
-                this.masterGain.gain.setValueAtTime(this.volume, this.audioContext.currentTime);
-            }
-            this.updateVolumeIcon();
+        document.querySelectorAll('a, button, .doc-card').forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                cursor.style.transform = 'translate(-50%, -50%) scale(1.5)';
+            });
+            el.addEventListener('mouseleave', () => {
+                cursor.style.transform = 'translate(-50%, -50%) scale(1)';
+            });
         });
     }
 
-    initAudio() {
-        if (this.audioContext) return;
+    // 加载文档列表
+    loadDocuments() {
+        this.documents = this.config.documents.map((doc, index) => ({
+            ...doc,
+            id: doc.id || index + 1
+        }));
+    }
 
-        this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    // 渲染头部
+    renderHeader() {
+        const header = document.querySelector('header');
+        const { blog, social } = this.config;
         
-        this.masterGain = this.audioContext.createGain();
-        this.masterGain.gain.setValueAtTime(this.volume, this.audioContext.currentTime);
-        
-        this.analyser = this.audioContext.createAnalyser();
-        this.analyser.fftSize = 256;
-
-        this.masterGain.connect(this.analyser);
-        this.analyser.connect(this.audioContext.destination);
-
-        this.dataArray = new Uint8Array(this.analyser.frequencyBinCount);
-    }
-
-    playNote(frequency, duration = 0.3, type = 'sine') {
-        if (!this.audioContext || !this.isPlaying) return;
-
-        const osc = this.audioContext.createOscillator();
-        const gainNode = this.audioContext.createGain();
-        
-        osc.type = type;
-        osc.frequency.setValueAtTime(frequency, this.audioContext.currentTime);
-        
-        gainNode.gain.setValueAtTime(0, this.audioContext.currentTime);
-        gainNode.gain.linearRampToValueAtTime(0.3, this.audioContext.currentTime + 0.02);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + duration);
-        
-        osc.connect(gainNode);
-        gainNode.connect(this.masterGain);
-        
-        osc.start(this.audioContext.currentTime);
-        osc.stop(this.audioContext.currentTime + duration);
-        
-        this.oscillators.push(osc);
-    }
-
-    playChord(frequencies, duration = 0.5) {
-        frequencies.forEach(freq => this.playNote(freq, duration, 'triangle'));
-    }
-
-    playMelody() {
-        const song = this.playlist[this.currentSongIndex];
-        const melody = this.melodies[song.key];
-        const noteInterval = 60000 / song.tempo / 2;
-
-        const playNextNote = () => {
-            if (!this.isPlaying) return;
-
-            const noteIndex = this.currentNoteIndex % melody.length;
-            const baseFreq = melody[noteIndex];
-            
-            const pattern = Math.floor(this.currentNoteIndex / 8) % 4;
-            
-            switch(pattern) {
-                case 0:
-                    this.playNote(baseFreq, 0.2, 'sine');
-                    break;
-                case 1:
-                    this.playNote(baseFreq, 0.3, 'triangle');
-                    this.playNote(baseFreq * 1.5, 0.15, 'sine');
-                    break;
-                case 2:
-                    this.playChord([baseFreq, baseFreq * 1.25, baseFreq * 1.5], 0.4);
-                    break;
-                case 3:
-                    this.playNote(baseFreq, 0.1, 'square');
-                    this.playNote(baseFreq * 0.5, 0.3, 'sine');
-                    break;
-            }
-            
-            this.currentNoteIndex++;
-        };
-
-        playNextNote();
-        this.noteInterval = setInterval(playNextNote, noteInterval);
-
-        this.bassInterval = setInterval(() => {
-            if (!this.isPlaying) return;
-            const bassFreq = melody[Math.floor(this.currentNoteIndex / 4) % melody.length] * 0.25;
-            this.playNote(bassFreq, 0.8, 'sine');
-        }, noteInterval * 4);
-    }
-
-    stopMelody() {
-        if (this.noteInterval) {
-            clearInterval(this.noteInterval);
-            this.noteInterval = null;
-        }
-        if (this.bassInterval) {
-            clearInterval(this.bassInterval);
-            this.bassInterval = null;
-        }
-        this.oscillators.forEach(osc => {
-            try { osc.stop(); } catch(e) {}
-        });
-        this.oscillators = [];
-        this.currentNoteIndex = 0;
-    }
-
-    togglePlay() {
-        this.initAudio();
-
-        if (this.audioContext.state === 'suspended') {
-            this.audioContext.resume();
-        }
-
-        this.isPlaying = !this.isPlaying;
-
-        if (this.isPlaying) {
-            this.elements.playBtn.textContent = '⏸';
-            this.elements.discContainer.classList.add('playing');
-            this.startProgressSimulation();
-            this.playMelody();
-        } else {
-            this.elements.playBtn.textContent = '▶';
-            this.elements.discContainer.classList.remove('playing');
-            this.stopProgressSimulation();
-            this.stopMelody();
-        }
-    }
-
-    startProgressSimulation() {
-        this.progressInterval = setInterval(() => {
-            if (this.currentTime < this.songDuration) {
-                this.currentTime += 1;
-                this.updateProgressUI();
-            } else {
-                this.nextSong();
-            }
-        }, 1000);
-    }
-
-    stopProgressSimulation() {
-        if (this.progressInterval) {
-            clearInterval(this.progressInterval);
-        }
-    }
-
-    seek(e) {
-        const rect = this.elements.progressTrack.getBoundingClientRect();
-        const percent = (e.clientX - rect.left) / rect.width;
-        this.currentTime = Math.floor(percent * this.songDuration);
-        this.updateProgressUI();
-    }
-
-    updateProgressUI() {
-        const progress = (this.currentTime / this.songDuration) * 100;
-        this.elements.progressFill.style.width = progress + '%';
-
-        this.elements.currentTimeEl.textContent = this.formatTime(this.currentTime);
-        this.elements.totalTimeEl.textContent = this.formatTime(this.songDuration);
-    }
-
-    formatTime(seconds) {
-        const mins = Math.floor(seconds / 60);
-        const secs = seconds % 60;
-        return `${mins}:${secs.toString().padStart(2, '0')}`;
-    }
-
-    prevSong() {
-        this.stopMelody();
-        this.currentSongIndex = (this.currentSongIndex - 1 + this.playlist.length) % this.playlist.length;
-        this.loadSong();
-        if (this.isPlaying) {
-            this.playMelody();
-        }
-    }
-
-    nextSong() {
-        this.stopMelody();
-        this.currentSongIndex = (this.currentSongIndex + 1) % this.playlist.length;
-        this.loadSong();
-        if (this.isPlaying) {
-            this.playMelody();
-        }
-    }
-
-    loadSong() {
-        const song = this.playlist[this.currentSongIndex];
-        this.elements.songTitle.textContent = song.name;
-        this.currentTime = 0;
-        this.songDuration = parseInt(song.duration.split(':')[0]) * 60 + parseInt(song.duration.split(':')[1]);
-
-        this.updateProgressUI();
-        this.updatePlaylistUI();
-
-        if (this.isPlaying) {
-            this.currentTime = 0;
-            this.updateProgressUI();
-        }
-    }
-
-    updatePlaylistUI() {
-        this.playlistItems.innerHTML = this.playlist.map((song, index) => `
-            <div class="playlist-item ${index === this.currentSongIndex ? 'active' : ''}" data-index="${index}">
-                <span class="song-name">${index + 1}. ${song.name}</span>
-                <span class="song-duration">${song.duration}</span>
+        header.innerHTML = `
+            <div class="logo">
+                <img src="${blog.avatar}" alt="${blog.author}" class="logo-avatar">
+                <div class="logo-text">
+                    <h1>${blog.title}</h1>
+                    <p>${blog.subtitle}</p>
+                </div>
             </div>
-        `).join('');
+            <nav>
+                <a href="#" class="active" data-page="home">🏠 首页</a>
+                <a href="#" data-page="docs">📄 文档</a>
+                <a href="#" data-page="about">👤 关于</a>
+            </nav>
+        `;
 
-        this.playlistItems.querySelectorAll('.playlist-item').forEach(item => {
-            item.addEventListener('click', () => {
-                const index = parseInt(item.dataset.index);
-                if (index !== this.currentSongIndex) {
-                    this.stopMelody();
-                }
-                this.currentSongIndex = index;
-                this.loadSong();
-                if (!this.isPlaying) {
-                    this.togglePlay();
+        header.querySelectorAll('nav a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                header.querySelectorAll('nav a').forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+            });
+        });
+    }
+
+    // 渲染 Hero 区域
+    renderHero() {
+        const hero = document.querySelector('.hero');
+        const { blog } = this.config;
+        
+        hero.innerHTML = `
+            <h2>欢迎来到 <span class="highlight">${blog.author}</span> 的世界</h2>
+            <p>${blog.description}</p>
+        `;
+    }
+
+    // 渲染分类筛选
+    renderCategoryFilter() {
+        const container = document.querySelector('.category-filter');
+        const categories = this.config.categories;
+        
+        // 计算每个分类的文档数量
+        const countByCategory = {};
+        this.documents.forEach(doc => {
+            countByCategory[doc.category] = (countByCategory[doc.category] || 0) + 1;
+        });
+
+        let html = `
+            <button class="filter-btn active" data-category="all">
+                🌟 全部 <span class="count">${this.documents.length}</span>
+            </button>
+        `;
+
+        categories.forEach(cat => {
+            const count = countByCategory[cat.id] || 0;
+            if (count > 0) {
+                html += `
+                    <button class="filter-btn" data-category="${cat.id}" style="--cat-color: ${cat.color}">
+                        ${cat.icon} ${cat.name} <span class="count">${count}</span>
+                    </button>
+                `;
+            }
+        });
+
+        container.innerHTML = html;
+
+        container.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                container.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                this.currentCategory = btn.dataset.category;
+                this.renderDocuments();
+            });
+        });
+    }
+
+    // 渲染文档列表
+    renderDocuments() {
+        const container = document.querySelector('.doc-grid');
+        const filteredDocs = this.currentCategory === 'all' 
+            ? this.documents 
+            : this.documents.filter(doc => doc.category === this.currentCategory);
+
+        if (filteredDocs.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div class="icon">📭</div>
+                    <h3>暂无文档</h3>
+                    <p>该分类下还没有文章哦~</p>
+                </div>
+            `;
+            return;
+        }
+
+        const categoryMap = {};
+        this.config.categories.forEach(cat => {
+            categoryMap[cat.id] = cat;
+        });
+
+        container.innerHTML = filteredDocs.map(doc => {
+            const cat = categoryMap[doc.category] || { name: '未分类', color: '#999', icon: '📁' };
+            const isPDF = doc.file.endsWith('.pdf');
+            const icon = isPDF ? '📄' : '📝';
+            
+            return `
+                <div class="doc-card" data-doc-id="${doc.id}">
+                    <div class="doc-card-header">
+                        <span class="doc-category" style="background: ${cat.color}20; color: ${cat.color}; border: 1px solid ${cat.color}40;">
+                            ${cat.icon} ${cat.name}
+                        </span>
+                        <span class="doc-date">${doc.date}</span>
+                    </div>
+                    <h3>${doc.title}</h3>
+                    <p>${doc.description}</p>
+                    <div class="doc-tags">
+                        ${doc.tags ? doc.tags.map(tag => `<span class="doc-tag">${tag}</span>`).join('') : ''}
+                    </div>
+                    <div class="doc-icon">${icon}</div>
+                </div>
+            `;
+        }).join('');
+
+        // 添加点击事件
+        container.querySelectorAll('.doc-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const docId = parseInt(card.dataset.docId);
+                const doc = this.documents.find(d => d.id === docId);
+                if (doc) {
+                    this.openDocument(doc);
                 }
             });
         });
     }
 
-    updateVolumeIcon() {
-        const icon = document.querySelector('.volume-icon');
-        if (this.volume === 0) {
-            icon.textContent = '🔇';
-        } else if (this.volume < 0.5) {
-            icon.textContent = '🔉';
+    // 渲染社交链接
+    renderSocialLinks() {
+        const container = document.querySelector('.social-links');
+        const social = this.config.social;
+        
+        const links = [
+            { key: 'github', icon: '𝔊', name: 'GitHub', url: social.github, color: '#fff' },
+            { key: 'bilibili', icon: '📺', name: 'B站', url: social.bilibili, color: '#00a1d6' },
+            { key: 'email', icon: '✉️', name: 'Email', url: social.email, color: '#ff6b9d' },
+            { key: 'twitter', icon: '𝕏', name: 'Twitter', url: social.twitter, color: '#1da1f2' },
+            { key: 'instagram', icon: '📷', name: 'Instagram', url: social.instagram, color: '#e4405f' },
+            { key: 'youtube', icon: '▶️', name: 'YouTube', url: social.youtube, color: '#ff0000' },
+            { key: 'telegram', icon: '✈️', name: 'Telegram', url: social.telegram, color: '#0088cc' },
+            { key: 'csdn', icon: 'C', name: 'CSDN', url: social.csdn, color: '#fc5531' },
+            { key: 'juejin', icon: '⛏️', name: '掘金', url: social.juejin, color: '#007fff' },
+            { key: 'zhihu', icon: '知', name: '知乎', url: social.zhihu, color: '#0084ff' }
+        ];
+
+        const activeLinks = links.filter(link => link.url);
+        
+        container.innerHTML = activeLinks.map(link => `
+            <a href="${link.url}" class="social-link" target="_blank" title="${link.name}" style="--link-color: ${link.color}">
+                <span>${link.icon}</span>
+            </a>
+        `).join('');
+    }
+
+    // 打开文档
+    async openDocument(doc) {
+        const modal = document.querySelector('.modal-overlay');
+        const modalTitle = modal.querySelector('.modal-header h2');
+        const modalBody = modal.querySelector('.modal-body');
+
+        modalTitle.textContent = doc.title;
+        
+        const isPDF = doc.file.endsWith('.pdf');
+        
+        if (isPDF) {
+            modalBody.innerHTML = `
+                <iframe src="${doc.file}" class="pdf-viewer" title="${doc.title}"></iframe>
+            `;
         } else {
-            icon.textContent = '🔊';
+            // 尝试加载 Markdown 文件
+            try {
+                const response = await fetch(doc.file);
+                const content = await response.text();
+                modalBody.innerHTML = `<div class="markdown-body">${this.parseMarkdown(content)}</div>`;
+            } catch (error) {
+                modalBody.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">😢</div>
+                        <h3>无法加载文档</h3>
+                        <p>请确保文档路径正确: ${doc.file}</p>
+                    </div>
+                `;
+            }
         }
+
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    // 简单的 Markdown 解析器
+    parseMarkdown(md) {
+        let html = md;
+
+        // 代码块
+        html = html.replace(/```(\w+)?\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>');
+        
+        // 行内代码
+        html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+        
+        // 标题
+        html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+        html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+        html = html.replace(/^# (.+)$/gm, '<h1>$1</h1>');
+        
+        // 粗体和斜体
+        html = html.replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>');
+        html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+        html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+        
+        // 链接
+        html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
+        
+        // 图片
+        html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img alt="$1" src="$2">');
+        
+        // 引用
+        html = html.replace(/^> (.+)$/gm, '<blockquote>$1</blockquote>');
+        
+        // 无序列表
+        html = html.replace(/^- (.+)$/gm, '<li>$1</li>');
+        html = html.replace(/(<li>.*<\/li>\n?)+/g, '<ul>$&</ul>');
+        
+        // 有序列表
+        html = html.replace(/^\d+\. (.+)$/gm, '<li>$1</li>');
+        
+        // 水平线
+        html = html.replace(/^---$/gm, '<hr>');
+        
+        // 段落
+        html = html.replace(/\n\n/g, '</p><p>');
+        html = '<p>' + html + '</p>';
+        
+        // 清理空段落
+        html = html.replace(/<p><\/p>/g, '');
+        html = html.replace(/<p>(<h[1-6]>)/g, '$1');
+        html = html.replace(/(<\/h[1-6]>)<\/p>/g, '$1');
+        html = html.replace(/<p>(<pre>)/g, '$1');
+        html = html.replace(/(<\/pre>)<\/p>/g, '$1');
+        html = html.replace(/<p>(<ul>)/g, '$1');
+        html = html.replace(/(<\/ul>)<\/p>/g, '$1');
+        html = html.replace(/<p>(<blockquote>)/g, '$1');
+        html = html.replace(/(<\/blockquote>)<\/p>/g, '$1');
+        html = html.replace(/<p>(<hr>)<\/p>/g, '$1');
+        
+        return html;
+    }
+
+    // 设置模态框
+    setupModal() {
+        const modal = document.querySelector('.modal-overlay');
+        const closeBtn = modal.querySelector('.modal-close');
+
+        closeBtn.addEventListener('click', () => this.closeModal());
+        
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                this.closeModal();
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                this.closeModal();
+            }
+        });
+    }
+
+    closeModal() {
+        const modal = document.querySelector('.modal-overlay');
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
     }
 }
 
+// 背景 Canvas 动画
+class BackgroundAnimation {
+    constructor() {
+        this.canvas = document.getElementById('bg-canvas');
+        this.ctx = this.canvas.getContext('2d');
+        this.particles = [];
+        this.resize();
+        this.initParticles();
+        this.animate();
+        
+        window.addEventListener('resize', () => this.resize());
+    }
+
+    resize() {
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
+    }
+
+    initParticles() {
+        const count = Math.floor((this.canvas.width * this.canvas.height) / 15000);
+        for (let i = 0; i < count; i++) {
+            this.particles.push({
+                x: Math.random() * this.canvas.width,
+                y: Math.random() * this.canvas.height,
+                size: Math.random() * 2 + 0.5,
+                speedX: (Math.random() - 0.5) * 0.3,
+                speedY: (Math.random() - 0.5) * 0.3,
+                hue: Math.random() * 60 + 280,
+                opacity: Math.random() * 0.5 + 0.2
+            });
+        }
+    }
+
+    animate() {
+        this.ctx.fillStyle = 'rgba(5, 5, 8, 0.1)';
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+        this.particles.forEach(p => {
+            p.x += p.speedX;
+            p.y += p.speedY;
+
+            if (p.x < 0 || p.x > this.canvas.width || p.y < 0 || p.y > this.canvas.height) {
+                p.x = Math.random() * this.canvas.width;
+                p.y = Math.random() * this.canvas.height;
+            }
+
+            this.ctx.beginPath();
+            this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            this.ctx.fillStyle = `hsla(${p.hue}, 100%, 70%, ${p.opacity})`;
+            this.ctx.fill();
+        });
+
+        // 绘制连接线
+        for (let i = 0; i < this.particles.length; i++) {
+            for (let j = i + 1; j < this.particles.length; j++) {
+                const dx = this.particles[i].x - this.particles[j].x;
+                const dy = this.particles[i].y - this.particles[j].y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+
+                if (dist < 120) {
+                    this.ctx.beginPath();
+                    this.ctx.strokeStyle = `rgba(196, 77, 255, ${0.08 * (1 - dist / 120)})`;
+                    this.ctx.lineWidth = 0.5;
+                    this.ctx.moveTo(this.particles[i].x, this.particles[i].y);
+                    this.ctx.lineTo(this.particles[j].x, this.particles[j].y);
+                    this.ctx.stroke();
+                }
+            }
+        }
+
+        requestAnimationFrame(() => this.animate());
+    }
+}
+
+// 初始化
 document.addEventListener('DOMContentLoaded', () => {
-    new MusicPlayer();
+    new AnimeBlog();
+    new BackgroundAnimation();
 });
