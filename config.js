@@ -6,10 +6,10 @@
 const CONFIG = {
     // 博客基本信息
     blog: {
-        title: "Akihabara Dream",
+        title: "OrdinarySwordman's Blog",
         subtitle: "Welcome to my anime dimension ✨",
-        author: "OrdinarySaber",
-        description: "一个二次元爱好者的个人博客",
+        author: "OrdinarySwordman",
+        description: "梦想成为游戏客户端开发工程师！",
         avatar: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0MCIgZmlsbD0iI2ZmNmI5ZCIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iNTAiIHI9IjE1IiBmaWxsPSIjYzQ0ZGZmIi8+PHBhdGggZD0iTTQwIDM1IGM1IDUgMTAgNiAxNSA2IiBzdHJva2U9IiMzZTU5ZmYiIHN0cm9rZS13aWR0aD0iMiIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik02MCAzNSBjLTUgNSAtMTAgNiAtMTUgNiIgc3Ryb2tlPSIjM2U1OWZmIiBzdHJva2Utd2lkdGg9IjIiIGZpbGw9ibm9uZSIvPjwvc3ZnPg=="
     },
 
@@ -17,7 +17,7 @@ const CONFIG = {
     social: {
         github: "https://github.com/OrdinarySaber",
         bilibili: "https://space.bilibili.com/你的UID",
-        email: "mailto:your@email.com",
+        email: "610122595@qq.com",
         twitter: "",
         instagram: "",
         youtube: "",
@@ -29,11 +29,11 @@ const CONFIG = {
 
     // 文档分类配置
     categories: [
-        { id: "tutorial", name: "教程", icon: "📚", color: "#ff6b9d" },
-        { id: "notes", name: "笔记", icon: "📝", color: "#c44dff" },
-        { id: "project", name: "项目", icon: "💻", color: "#4dffff" },
+        { id: "unity", name: "Unity", icon: "📚", color: "#ff6b9d" },
+        { id: "cpp", name: "C++", icon: "📝", color: "#c44dff" },
+        { id: "project", name: "项目", icon: "💻", color: "#66ccff" },
         { id: "thoughts", name: "随想", icon: "💭", color: "#ffcc00" },
-        { id: "translate", name: "翻译", icon: "🌐", color: "#4facfe" },
+       
         { id: "uncategorized", name: "未分类", icon: "📁", color: "#999" }
     ],
 
@@ -44,7 +44,7 @@ const CONFIG = {
         {
             id: 1,
             title: "🎮 我的第一个游戏开发笔记",
-            category: "notes",
+            category: "unity",
             date: "2024-01-15",
             description: "关于使用Unity开发2D游戏的入门笔记",
             tags: ["Unity", "GameDev", "入门"],
@@ -53,7 +53,7 @@ const CONFIG = {
         {
             id: 2,
             title: "📖 TypeScript 进阶教程",
-            category: "tutorial",
+            category: "cpp",
             date: "2024-01-10",
             description: "深入学习TypeScript的高级特性",
             tags: ["TypeScript", "教程", "前端"],
