@@ -84,7 +84,7 @@ const CONFIG = {
             date: "2024-01-20",
             description: "详细说明如何配置博客，包括社交链接、文档路径等",
             tags: ["配置", "教程", "文档"],
-            file: "docs/配置指南.md"
+            file: "docs/博客配置指南.md"
         }
     ],
 
