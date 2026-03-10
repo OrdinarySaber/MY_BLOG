@@ -27,6 +27,8 @@ bld/
 mssql/
 obj/
 [Pp]ublish/
+# 取消对 publish 文件夹的忽略
+!publish/
 [Tt]est[Rr]esult*/
 [Bb]uild[Ll]og.*
 [Bb]uild.*
